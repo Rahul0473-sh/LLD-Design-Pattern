@@ -133,7 +133,12 @@ class Game{
     void intializeGame(){
        board = Board(10, 5, 4);
        dice=Dice(1);
+       addPlayers();
 
+    }
+    void addPlayers(){
+        players.push_back(Player('id-1',0));
+        players.push_back(Player('id-1',0));
     }
 };
 
