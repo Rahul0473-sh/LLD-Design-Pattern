@@ -1,147 +1,200 @@
 #include <bits/stdc++.h>
+#include <thread>
+#include <chrono>
 using namespace std;
 
-class Player{
-    string id;
-    int currentPostion;
+class Board{
+    private:
+    unordered_map<int,int>snakes;
+    unordered_map<int,int>ladders;
+    int size;
 
     public:
-    Player(string id, int currentPosition){
-        this->id=id;
-        this->currentPostion=currentPosition;
+    Board(int size){
+        this->size=size;
     }
-   string  getPlayerId(){return id;};
-   int getCurrentPostion(){return currentPostion;}
-
-
-};
-class Jump{
-    public:
-    int start, end;
-    Jump(){
-        this->start=0;
-        this->end=0;
+    int getsize() {
+        return this->size;
     }
-    Jump(int start,int end){
-        this->start=start;
-        this->end=end;
+    void addSnake(int start,int end){
+        snakes[start]=end;
     }
-    int getJumpStart(){return start;}
-    int getJumpEnd(){ return end;}
-};
+    void addLadder(int start, int end){
+        ladders[start]=end;
+    }
+    int getNextPosition(int currPosition){
+        auto snakeit=snakes.find(currPosition);
+        if(snakeit!=snakes.end()){
+            cout<<"You Hit the snake, you need to go down"<<endl;
+            return snakeit->second;
+        }
+        auto ladderit=ladders.find(currPosition);
+        if(ladderit!=ladders.end()){
+            cout<<"You Hit the Ladder, you need to ladder Up"<<endl;
+            return ladderit->second;
+        }
+        return currPosition;
+    }
+    void DisplayInfo(){
+        cout<<"\nBoard Infromation"<<endl;
+        cout<<"\n size "<<size<<" squares"<<endl;
 
-class Cell{
-    public:
-    Jump jump;
+        cout << "\nSnakes:" << endl;
+        for (const auto &snake : snakes)
+        {
+            cout << "From " << snake.first << " to " << snake.second << endl;
+        }
+
+        cout << "\nLadders:" << endl;
+        for (const auto &ladder : ladders)
+        {
+            cout << "From " << ladder.first << " to " << ladder.second << endl;
+        }
+    }
+
 };
 class Dice{
-    int diceCount;
-    int min=1;
-    int max=6;
-
+    int sides;
     public:
-    Dice(){
-        this->diceCount=1;
+    Dice(int sides=6) {
+        this->sides=sides;
     }
-    Dice(int diceCount){
-        this->diceCount=diceCount;
-    }
-    int rollDice(){
-        int totalsum=0;
-        int diceUsed=0;
-
-        while(diceUsed<diceCount){
-            srand(time(nullptr));
-            totalsum+=rand()%6+1;
-            diceUsed++;
-        }
-        return totalsum;
+    int roll(){
+        return rand()%sides+1;
     }
 };
+class Player{
+    string name;
+    int position;
+    bool winner=false;
 
-class Board{
-    vector<vector<Cell>>cells;
     public:
-    Board(){
-        intializeCells(10);
-        addSnakeAndLadders(5,5);
+    Player(string name) : name(name), position(0), winner(false) {}
+    
+    string getName(){
+        return this->name;
     }
-    Board(int boardSize, int numberOfLadders, int numberOfSnakes){
-        intializeCells(boardSize);
-        addSnakeAndLadders(numberOfLadders,numberOfSnakes);
-        
+    int getPosition(){
+        return position;
     }
-    void intializeCells(int n){
-        cells.resize(n,vector<Cell>(n));
-
-        for(int i=0;i<n;i++){
-            for(int j=0;j<n;j++){
-                cells[i][j]=Cell();
-            }
-        }
+    bool isWinner(){
+        return winner;
     }
-    void addSnakeAndLadders(int snakes, int ladders){
-        int n=cells.size();
-        int maxcell=n*n-1;
-        while(snakes>0){
-            srand(time(nullptr));
-            int snakeHead=rand()%maxcell+1;
-            int snakeTail=rand()%maxcell+1;
-            
-            if(snakeTail>=snakeHead) continue;
-            Jump  snakeObj=Jump();
-            snakeObj.start=snakeHead;
-            snakeObj.end=snakeTail;
-
-            Cell cell=getCell(snakeHead);
-            cell.jump=snakeObj;
-
-            snakes--;
-        }
-
-        while(ladders>0){
-            srand(time(nullptr));
-            int ladderStart=rand()%maxcell+1;
-            int ladderEnd=rand()%maxcell+1;
-            
-            if(ladderEnd<=ladderStart) continue;
-            Jump  ladderObj=Jump();
-            ladderObj.start=ladderStart;
-            ladderObj.end=ladderEnd;
-
-            Cell cell=getCell(ladderStart);
-            cell.jump=ladderObj;
-
-            ladders--;
-        }
+    void setPosition(int position){
+        this->position=position;
     }
-    Cell getCell(int playerPosition){
-        int boardrow=playerPosition/cells.size();
-        int boardcol=playerPosition%cells.size();   
-
-        return cells[boardrow][boardcol];
+    void setWinner(bool status){
+        winner=status;
+    }
+    void displayInfo() {
+        cout << "Player: " << name << endl;
+        cout << "Position: " << position << endl;
+        cout << "Status: " << (winner ? "Winner!" : "Playing") << endl;
     }
 };
 class Game{
+    private:
     Board board;
-    list<Player>players;
+    vector<Player*>players;
     Dice dice;
-    public:
-    Game(){
-        intializeGame();
-    }
-    void intializeGame(){
-       board = Board(10, 5, 4);
-       dice=Dice(1);
-       addPlayers();
+    int currentPlayerIdx;
+    bool gameOver;
 
+    public:
+    Game(int boardsize=100): board(boardsize),currentPlayerIdx(0),gameOver(false){};
+
+    void addPlayer(const string& name){
+        players.push_back(new Player(name));
     }
-    void addPlayers(){
-        players.push_back(Player('id-1',0));
-        players.push_back(Player('id-1',0));
+    void setupBoard(){
+    board.addSnake(99, 10);
+    board.addSnake(95, 75);
+    board.addSnake(92, 88);
+    board.addSnake(89, 68);
+    board.addSnake(74, 53);
+    board.addSnake(62, 19);
+    board.addSnake(46, 25);
+    board.addSnake(49, 11);
+    
+    // Add ladders
+    board.addLadder(2, 38);
+    board.addLadder(7, 14);
+    board.addLadder(8, 31);
+    board.addLadder(15, 26);
+    board.addLadder(21, 42);
+    board.addLadder(28, 84);
+    board.addLadder(36, 44);
+    board.addLadder(51, 67);
+    board.addLadder(71, 91);
+    board.addLadder(78, 98);
+
+    board.DisplayInfo();
+    }
+    bool makeMove(){
+        if(gameOver || players.empty()) return false;
+        Player * currentPlayer=getCurrentPlayer();
+
+        cout << "\n" << currentPlayer->getName() << "'s turn" << endl;
+        int roll=dice.roll();
+        cout<<" Rolled "<<roll<< endl;
+        movePlayer(currentPlayer, roll);
+
+        if (checkWin(currentPlayer))
+        {
+            currentPlayer->setWinner(true);
+            gameOver = true;
+            cout << "\nCongratulations! " << currentPlayer->getName() << " wins!" << endl;
+            return false;
+        }
+        currentPlayerIdx = (currentPlayerIdx + 1) % players.size();
+        return true;
+    }
+    void play(){
+        if(players.empty()){
+            cout<<"\n No Players are Playing"<<endl;
+            return;
+        }
+
+        cout<<"\nStarting the Game"<<endl;
+        while(makeMove()){
+            displayStatus();
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+    }
+    void movePlayer(Player * player, int steps ){
+        int newPostion=player->getPosition()+steps;
+        if(newPostion>board.getsize()){
+            cout<<"Cannot Move , need exact number to win\n";
+            return;
+        }
+        newPostion=board.getNextPosition(newPostion);
+        player->setPosition(newPostion);
+
+        cout << player->getName() << " moved to position " << newPostion << endl;
+    }
+    
+    void displayStatus(){
+        cout<<"Current Game Status"<<endl;
+        for(const auto& player:players){
+            cout << player->getName() << " at position " << player->getPosition() << endl;
+        }
+    }
+    bool checkWin(Player* player){
+        return player->getPosition()==board.getsize();
+    }
+    Player* getCurrentPlayer(){
+        return players[currentPlayerIdx];
     }
 };
 
+
+// class
 int main(){
-    return 0;
+     srand(time(0));
+
+    Game game;
+    game.addPlayer("Rahul");
+    game.addPlayer("Ritik");
+    game.setupBoard();
+    game.play();
 }
