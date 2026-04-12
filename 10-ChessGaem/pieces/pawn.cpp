@@ -28,7 +28,7 @@ bool Pawn:: isValidMove(Position newPositon, Piece* board[8][8])const{
     if(abs(dy)==1 && dx==direction){
 
         Piece* targetPiece=board[newPositon.getX()][newPositon.getY()];
-        if(!targetPiece || targetPiece->getColor()!=getColor()) return true;
+        if(targetPiece || targetPiece->getColor()!=getColor()) return true;
     }
     return false;
 }
