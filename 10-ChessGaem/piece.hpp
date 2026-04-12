@@ -20,8 +20,8 @@ class Piece{
     public:
     Piece(PieceType type, Color color,Position position):type(type),
     color(color),position(position),captured(false){}
-    
-    // virtual ~Piece=default;
+
+    virtual ~Piece() = default;
 
     PieceType getType() const{return type;}
     Color getColor()const{return color;}
@@ -35,7 +35,7 @@ class Piece{
     }
     virtual bool isValidMove(Position newPosition,Piece* board[8][8]) const=0;
 
-    string getSymbol(){
+    string getSymbol() const {
         char symbol;
         switch (type)
         {

@@ -11,7 +11,7 @@ bool Knight:: isValidMove(Position newPos,Piece* board[8][8]) const{
     int dx=abs(newPos.getX()-currPos.getX());
     int dy=abs(newPos.getY()-currPos.getY());
 
-    if((dx==1 && dx==2) || (dx==2 && dx==1)){
+    if ((dx == 1 && dy == 2) || (dx == 2 && dy == 1)) {
         Piece * targetPiece=board[newPos.getX()][newPos.getY()];
         return !targetPiece || targetPiece->getColor()!=getColor();
     }

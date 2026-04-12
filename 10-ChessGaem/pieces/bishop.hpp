@@ -1,7 +1,7 @@
 #ifndef BISHOP_HPP
 #define BISHOP_HPP
 
-#include "10-ChessGaem/piece.hpp"
+#include "../piece.hpp"
 
 class Bishop: public Piece{
     public:

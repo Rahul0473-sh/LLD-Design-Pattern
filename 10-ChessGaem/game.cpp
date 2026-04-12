@@ -1,5 +1,5 @@
-#include <game.hpp>
-#include<bits/stdc++.h>
+#include "game.hpp"
+#include <bits/stdc++.h>
 using namespace std;
 
 Game:: Game(): currentTurn(Color::WHITE), gameOver(false)  {
@@ -11,8 +11,13 @@ void Game:: start(){
 
         cout<<((currentTurn==Color::WHITE)?"WHITE":"BLACK")<<"'s turn"<<endl;
         int fromX,fromY, toX, toY;
-        cout<<"Enter Move (FromX FromY ToX ToY)"<<endl;
+        cout<<"Enter Move (FromX FromY ToX ToY), or -1 -1 -1 -1 to quit"<<endl;
         cin>>fromX>>fromY>>toX>>toY;
+
+        if (fromX == -1) {
+            gameOver = true;
+            break;
+        }
 
         Position from(fromX, fromY);
         Position to(toX,toY);

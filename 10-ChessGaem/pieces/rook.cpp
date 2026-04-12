@@ -1,4 +1,4 @@
-#include "rook.hpp";
+#include "rook.hpp"
 #include "bits/stdc++.h"
 using namespace std;
 
@@ -18,7 +18,7 @@ bool Rook:: isValidMove(Position newPos,Piece* board[8][8]) const{
         int x=currPos.getX()+xStep;
         int y=currPos.getY()+yStep;
 
-        while(x!=newPos.getX() && y!=newPos.getY()){
+        while(x!=newPos.getX() || y!=newPos.getY()){
             if(board[x][y]!=nullptr) return false;
  
             x+=xStep;

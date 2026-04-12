@@ -2,7 +2,7 @@
 #define BOARD_HPP
 #include <bits/stdc++.h>
 
-#include <piece.hpp>
+#include "piece.hpp"
 
 class Board{
     private:

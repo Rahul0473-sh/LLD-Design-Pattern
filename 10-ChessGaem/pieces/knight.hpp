@@ -1,6 +1,6 @@
 #ifndef KNIGHT_HPP
 #define KNIGHT_HPP
-#include "10-ChessGaem/piece.hpp"
+#include "../piece.hpp"
 
 
 class Knight: public Piece{
