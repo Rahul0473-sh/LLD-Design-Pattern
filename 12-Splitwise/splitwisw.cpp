@@ -194,7 +194,7 @@ int main(){
 
     vector<User*>participants={A,B,C};
 
-    ExpenseServcie:: addExpense(group,"Dinner",300,A,participants,SplitType::EQUAL,{});
-    ExpenseServcie:: addExpense(group,"Taxi",150, B,participants, SplitType:: EQUAL,{});
+    ExpenseServcie:: addExpense(group,"Dinner",400,A,participants,SplitType::EQUAL,{});
+    ExpenseServcie:: addExpense(group,"Taxi",200, B,participants, SplitType:: EQUAL,{});
     BalanceSheetService::printBalances(group);
 };
