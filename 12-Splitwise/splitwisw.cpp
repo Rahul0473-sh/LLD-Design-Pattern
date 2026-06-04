@@ -196,5 +196,6 @@ int main(){
 
     ExpenseServcie:: addExpense(group,"Dinner",400,A,participants,SplitType::EQUAL,{});
     ExpenseServcie:: addExpense(group,"Taxi",200, B,participants, SplitType:: EQUAL,{});
-    BalanceSheetService::printBalances(group);
+    DebtSimplificationService::simplify(group);
+    // BalanceSheetService::printBalances(group);
 };
